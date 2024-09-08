@@ -4,6 +4,7 @@ package com.eddie.controller;
 import com.eddie.pojo.Result;
 import com.eddie.pojo.User;
 import com.eddie.service.Userservice;
+import com.eddie.utils.JwtUtil;
 import com.eddie.utils.Md5Util;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -56,7 +60,11 @@ public class UserController {
         String md5String = Md5Util.getMD5String(password);
         //判断密码是否正确
         if (md5String.equals(user.getPassword()) ){
-            return Result.success("jwt");
+            Map<String,Object> claims = new HashMap<>();
+            claims.put("id",user.getId());
+            claims.put("username",username);
+            String token = JwtUtil.genToken(claims);
+            return Result.success(token);
         }
             return Result.error("密码错误");
 
