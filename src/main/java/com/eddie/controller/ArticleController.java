@@ -15,8 +15,6 @@ public class ArticleController {
 
     @GetMapping("/list")
     public Result<String> list(){
-
-
         return Result.success("文章数据");
     }
 
