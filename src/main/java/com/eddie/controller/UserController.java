@@ -10,6 +10,7 @@ import com.eddie.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -117,5 +118,42 @@ public class UserController {
     public Result updateAvatar(@RequestParam String avatarUrl){
         userservice.updateAvatar(avatarUrl);
         return Result.success("头像更新成功");
+    }
+
+    /**
+     * 更新密码
+     * @param params
+     * @return
+     */
+    @PatchMapping("/updatePwd")
+    public Result updatePwd(@RequestBody Map<String,String> params){
+        //"old_pwd":"123456",
+        // "new_pwd":"234567",
+        // "re_pwd":"234567"
+        String OldString = params.get("old_pwd");
+        String NewString = params.get("new_pwd");
+        String ReString = params.get("re_pwd");
+        //1检查密码是否为空
+        if (!StringUtils.hasLength(OldString) || !StringUtils.hasLength(NewString) || !StringUtils.hasLength(ReString)){
+            return Result.error("密码不能为空");
+        }
+        //2检查密码是否正确
+        Map<String,Object> map = ThreadLocalUtil.get();
+        User user = userservice.getByUsername(map.get("username").toString());
+        if(!Md5Util.getMD5String(OldString).equals(user.getPassword())){
+            return Result.error("原密码错误");
+        }
+        //3检查新密码和重复密码是否相同
+        if (!NewString.equals(ReString)){
+            return Result.error("两次密码不相同");
+        }
+        //4新密码不能与旧密码相同
+        if(Md5Util.getMD5String(NewString).equals(user.getPassword())){
+            return Result.error("新密码不能与旧密码相同");
+        }
+        //4更新密码
+        Integer id = (Integer) map.get("id");
+        userservice.updatePwd(Md5Util.getMD5String(NewString),id);
+        return Result.success("密码更新成功");
     }
 }

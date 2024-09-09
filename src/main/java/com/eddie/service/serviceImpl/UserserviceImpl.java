@@ -59,4 +59,13 @@ public class UserserviceImpl implements Userservice {
         Integer id = (Integer) map.get("id");
         userMapper.updateAvatar(avatarUrl,id);
     }
+
+    /**
+     * 更新密码
+     * @param password
+     */
+    @Override
+    public void updatePwd(String password, Integer id) {
+        userMapper.updatePwd(password,id);
+    }
 }

@@ -38,4 +38,11 @@ public interface UserMapper {
      */
     @Update("update user set user_pic=#{avatarUrl},update_time=now() where id = #{id}")
     void updateAvatar(String avatarUrl,Integer id);
+
+    /**
+     * 更新密码
+     * @param password
+     */
+    @Update("update user set password=#{password},update_time=now() where id = #{id}")
+    void updatePwd(String password,Integer id);
 }
