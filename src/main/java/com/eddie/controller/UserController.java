@@ -95,4 +95,27 @@ public class UserController {
         User user = userservice.getByUsername(username);
         return Result.success(user);
     }
+
+    /**
+     * 更新用户信息
+     * @param user
+     * @return
+     */
+    @PutMapping("/update")
+    public Result update(@RequestBody @Validated User user){
+        log.info("更新用户信息：{}",user.getUsername());
+        userservice.update(user);
+        return Result.success("更新用户信息成功");
+    }
+
+    /**
+     * 更新用户头像
+     * @param avatarUrl
+     * @return
+     */
+    @PatchMapping("/updateAvatar")
+    public Result updateAvatar(@RequestParam String avatarUrl){
+        userservice.updateAvatar(avatarUrl);
+        return Result.success("头像更新成功");
+    }
 }
